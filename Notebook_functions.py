@@ -205,10 +205,9 @@ def crop_and_downsample_video(input_video_path, output_video_path, crop_region, 
     # Release the video capture and writer objects
     cap.release()
     out.release()
-    print('succes')
 
 # Call the function with appropriate arguments
-crop_and_downsample_video('CVR_M32_13juin.mp4', 'output_video.mp4', (926, 419, 74, 84), skip_frames=10)
+# crop_and_downsample_video('CVR_M32_13juin.mp4', 'output_video.mp4', (926, 419, 74, 84), skip_frames=10)
 
 
 def organize_video_files(folder_path, VideoType):
@@ -237,7 +236,7 @@ def organize_video_files(folder_path, VideoType):
     print("Organizing completed successfully!")
 
 
-def analysis_of_folder(video_file_path, VideoType, numpy_array):
+def analysis_of_folder(video_file_path, VideoType, numpy_array, frame_skip):
     # uptain subfolder path and video name
     folder_path = os.path.dirname(video_file_path)
     video_name = os.path.basename(folder_path)
@@ -259,7 +258,7 @@ def analysis_of_folder(video_file_path, VideoType, numpy_array):
     filter_aberrant_data(folder_path+'/20framesDLC_resnet50_11times60framesJul24shuffle1_180000.csv')
     window = window_creation(folder_path+'/cleaned_20framesDLC_resnet50_11times60framesJul24shuffle1_180000.csv', gage=15)
     crop_video_path = folder_path+'/'+video_name+'_analysed.'+VideoType
-    crop_video(video_file_path, crop_video_path, window)
+    crop_and_downsample_video(video_file_path, crop_video_path, window, frame_skip)
 
     # removal of data from shorten video
     os.remove(folder_path+'/20frames.mp4')
@@ -282,7 +281,7 @@ def analysis_of_folder(video_file_path, VideoType, numpy_array):
     return f'Analysis complete of {video_name}'
 
 
-def process_subfolders(main_folder, VideoType, numpy_array):
+def process_subfolders(main_folder, VideoType, numpy_array, frame_skip):
     if not os.path.exists(main_folder):
         print(f"The folder '{main_folder}' does not exist.")
         return
@@ -297,16 +296,16 @@ def process_subfolders(main_folder, VideoType, numpy_array):
         if not os.path.exists(video_file_path):
             raise FileNotFoundError(f"No video file '{video_file_name}' found in subfolder '{subfolder_name}'.")
 
-        analysis_of_folder(video_file_path, VideoType, numpy_array)
+        analysis_of_folder(video_file_path, VideoType, numpy_array, frame_skip)
 
 
-def analysis(video_folder, VideoType='mp4', numpy_array=True):
+def analysis(video_folder, VideoType='mp4', numpy_array=True, frame_skip = 1):
 
     # creates folders
     organize_video_files(video_folder, VideoType)
 
     # start analysis of each folder individually
-    process_subfolders(video_folder, VideoType, numpy_array)
+    process_subfolders(video_folder, VideoType, numpy_array, frame_skip)
     return 'Analysis complete all videos'
 
 
@@ -387,11 +386,4 @@ def filter_aberrant_data(csv_file_path):
 
 
 
-def create_labeled_video(file_path):
-    crop_project_name = '11times60frames_croped-Ben-2023-08-04'
-    crop_path_config_file = crop_project_name + '/config.yaml'
-    deeplabcut.create_labeled_video(crop_path_config_file, file_path, videotype='mp4')
-# # Example usage:
-# csv_file_path = "11_videos_2023-07-24/CVR_M35_7juin/20framesDLC_resnet50_11times60framesJul24shuffle1_180000.csv"  # Replace this with the actual CSV file path
-# filter_aberrant_data(csv_file_path)
 
