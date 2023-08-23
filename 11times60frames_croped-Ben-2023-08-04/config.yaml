@@ -1,0 +1,100 @@
+    # Project definitions (do not edit)
+Task: 11times60frames_croped
+scorer: Ben
+date: Aug4
+multianimalproject: false
+identity:
+
+    # Project path (change when moving around)
+project_path: 11times60frames_croped-Ben-2023-08-04
+
+    # Annotation data set configuration (and individual video cropping parameters)
+video_sets:
+  ? C:\Users\User\OneDrive - Université 
+    Laval\Documents\Work\Stages\CHU\DLC\11times60frames_croped-Ben-2023-08-04\videos\CVR_M32_13juin_analysed.mp4
+  : crop: 0, 76, 0, 78
+  ? C:\Users\User\OneDrive - Université 
+    Laval\Documents\Work\Stages\CHU\DLC\11times60frames_croped-Ben-2023-08-04\videos\CVR_M33_13juin_analysed.mp4
+  : crop: 0, 66, 0, 68
+  ? C:\Users\User\OneDrive - Université 
+    Laval\Documents\Work\Stages\CHU\DLC\11times60frames_croped-Ben-2023-08-04\videos\CVR_M34_12juin_analysed.mp4
+  : crop: 0, 70, 0, 72
+  ? C:\Users\User\OneDrive - Université 
+    Laval\Documents\Work\Stages\CHU\DLC\11times60frames_croped-Ben-2023-08-04\videos\CVR_M35_7juin_analysed.mp4
+  : crop: 0, 70, 0, 74
+  ? C:\Users\User\OneDrive - Université 
+    Laval\Documents\Work\Stages\CHU\DLC\11times60frames_croped-Ben-2023-08-04\videos\CVR_M36_15juin_analysed.mp4
+  : crop: 0, 70, 0, 74
+  ? C:\Users\User\OneDrive - Université 
+    Laval\Documents\Work\Stages\CHU\DLC\11times60frames_croped-Ben-2023-08-04\videos\CVR_M37_15juin_analysed.mp4
+  : crop: 0, 72, 0, 74
+  ? C:\Users\User\OneDrive - Université 
+    Laval\Documents\Work\Stages\CHU\DLC\11times60frames_croped-Ben-2023-08-04\videos\RS_M35_6juillet_bottom_video_analysed.mp4
+  : crop: 0, 70, 0, 74
+  ? C:\Users\User\OneDrive - Université 
+    Laval\Documents\Work\Stages\CHU\DLC\11times60frames_croped-Ben-2023-08-04\videos\RS_M35_6juillet_top_video_analysed.mp4
+  : crop: 0, 72, 0, 74
+  ? C:\Users\User\OneDrive - Université 
+    Laval\Documents\Work\Stages\CHU\DLC\11times60frames_croped-Ben-2023-08-04\videos\RS_M36_6juillet_left_video_analysed.mp4
+  : crop: 0, 74, 0, 84
+  ? C:\Users\User\OneDrive - Université 
+    Laval\Documents\Work\Stages\CHU\DLC\11times60frames_croped-Ben-2023-08-04\videos\RS_M36_6juillet_right_video_analysed.mp4
+  : crop: 0, 68, 0, 70
+  ? C:\Users\User\OneDrive - Université 
+    Laval\Documents\Work\Stages\CHU\DLC\11times60frames_croped-Ben-2023-08-04\videos\RS_M37_6juillet_close_video_analysed.mp4
+  : crop: 0, 74, 0, 80
+bodyparts:
+- left
+- right
+- top
+- bottom
+
+    # Fraction of video to start/stop when extracting frames for labeling/refinement
+
+    # Fraction of video to start/stop when extracting frames for labeling/refinement
+
+    # Fraction of video to start/stop when extracting frames for labeling/refinement
+
+    # Fraction of video to start/stop when extracting frames for labeling/refinement
+
+    # Fraction of video to start/stop when extracting frames for labeling/refinement
+
+    # Fraction of video to start/stop when extracting frames for labeling/refinement
+start: 0
+stop: 1
+numframes2pick: 60
+
+    # Plotting configuration
+skeleton:
+- - left
+  - right
+- - bottom
+  - top
+skeleton_color: white
+pcutoff: 0.6
+dotsize: 1
+alphavalue: 0.7
+colormap: rainbow
+
+    # Training,Evaluation and Analysis configuration
+TrainingFraction:
+- 0.95
+iteration: 0
+default_net_type: resnet_50
+default_augmenter: default
+snapshotindex: -1
+batch_size: 8
+
+    # Cropping Parameters (for analysis and outlier frame detection)
+cropping: false
+    #if cropping is true for analysis, then set the values here:
+x1: 0
+x2: 640
+y1: 277
+y2: 624
+
+    # Refinement configuration (parameters from annotation dataset configuration also relevant in this stage)
+corner2move2:
+- 50
+- 50
+move2corner: true

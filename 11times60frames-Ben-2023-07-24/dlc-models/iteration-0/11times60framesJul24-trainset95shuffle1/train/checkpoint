@@ -1,0 +1,4 @@
+model_checkpoint_path: "/content/drive/My Drive/11times60frames-Ben-2023-07-24/dlc-models/iteration-0/11times60framesJul24-trainset95shuffle1/train/snapshot-180000"
+all_model_checkpoint_paths: "/content/drive/My Drive/11times60frames-Ben-2023-07-24/dlc-models/iteration-0/11times60framesJul24-trainset95shuffle1/train/snapshot-160000"
+all_model_checkpoint_paths: "/content/drive/My Drive/11times60frames-Ben-2023-07-24/dlc-models/iteration-0/11times60framesJul24-trainset95shuffle1/train/snapshot-170000"
+all_model_checkpoint_paths: "/content/drive/My Drive/11times60frames-Ben-2023-07-24/dlc-models/iteration-0/11times60framesJul24-trainset95shuffle1/train/snapshot-180000"

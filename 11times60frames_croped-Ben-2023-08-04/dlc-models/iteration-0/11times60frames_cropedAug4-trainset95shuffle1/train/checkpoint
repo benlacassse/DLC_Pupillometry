@@ -1,0 +1,6 @@
+model_checkpoint_path: "/content/drive/My Drive/11times60frames_croped-Ben-2023-08-04/dlc-models/iteration-0/11times60frames_cropedAug4-trainset95shuffle1/train/snapshot-800000"
+all_model_checkpoint_paths: "/content/drive/My Drive/11times60frames_croped-Ben-2023-08-04/dlc-models/iteration-0/11times60frames_cropedAug4-trainset95shuffle1/train/snapshot-760000"
+all_model_checkpoint_paths: "/content/drive/My Drive/11times60frames_croped-Ben-2023-08-04/dlc-models/iteration-0/11times60frames_cropedAug4-trainset95shuffle1/train/snapshot-770000"
+all_model_checkpoint_paths: "/content/drive/My Drive/11times60frames_croped-Ben-2023-08-04/dlc-models/iteration-0/11times60frames_cropedAug4-trainset95shuffle1/train/snapshot-780000"
+all_model_checkpoint_paths: "/content/drive/My Drive/11times60frames_croped-Ben-2023-08-04/dlc-models/iteration-0/11times60frames_cropedAug4-trainset95shuffle1/train/snapshot-790000"
+all_model_checkpoint_paths: "/content/drive/My Drive/11times60frames_croped-Ben-2023-08-04/dlc-models/iteration-0/11times60frames_cropedAug4-trainset95shuffle1/train/snapshot-800000"
