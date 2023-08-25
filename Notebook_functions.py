@@ -2,14 +2,13 @@ import csv
 import numpy as np
 from math import sqrt
 import matplotlib.pyplot as plt
-from scipy.signal import savgol_filter, medfilt
 import deeplabcut
 import os
 import cv2
 import imageio
 import shutil
 
-def extract_uniformly_spread_frames(video_path, output_folder, num_frames=100):
+def extract_uniformly_spread_frames(video_path, output_folder, num_frames=20):
     # Create the output folder if it doesn't exist
     os.makedirs(output_folder, exist_ok=True)
     
@@ -29,7 +28,7 @@ def extract_uniformly_spread_frames(video_path, output_folder, num_frames=100):
         imageio.imwrite(frame_filename, frame)
 
 
-def create_video_from_frames(frames_folder, output_video_path, fps=30):
+def create_video_from_frames(frames_folder, output_video_path):
     # Get the list of image files in the frames folder
     frame_files = sorted([f for f in os.listdir(frames_folder) if f.endswith(".jpg")])
     
@@ -40,7 +39,7 @@ def create_video_from_frames(frames_folder, output_video_path, fps=30):
     
     # Initialize the video writer
     fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Use appropriate codec
-    out = cv2.VideoWriter(output_video_path, fourcc, fps, size)
+    out = cv2.VideoWriter(output_video_path, fourcc, 30, size)
 
     # Loop through the image files and add them to the video
     for frame_file in frame_files:
@@ -59,7 +58,7 @@ def eucledian_distance(x1, y1, x2, y2):
     return sqrt((float(x1) - float(x2)) ** 2 + (float(y1) - float(y2)) ** 2)
 
 
-def np_distance(csv_file, save=True):
+def np_distance(csv_file):
     parts = csv_file.split('DLC_resnet50_11times60frames_cropedAug4shuffle1_800000.csv', 1)  # Split into two parts at the first occurrence of target_sequence
     if len(parts) > 1:
         video_name = parts[0]
@@ -77,9 +76,8 @@ def np_distance(csv_file, save=True):
                 y_list.append(y_distance)
         x_array = np.array(x_list)
         y_array = np.array(y_list)
-        if save == True:
-            np.save(video_name + '_x_array.npy', x_array)
-            np.save(video_name + '_y_array.npy', y_array)
+        np.save(video_name + '_x_array.npy', x_array)
+        np.save(video_name + '_y_array.npy', y_array)
         return x_array, y_array
 
 
@@ -99,7 +97,7 @@ def find_min_max(lst):
     return min_val, max_val
 
 
-def window_creation(csv_file, gage = 5):
+def window_creation(csv_file, gage=15):
     with open(csv_file, newline='') as f:
         reader = csv.reader(f)
         x_min = []
@@ -126,38 +124,6 @@ def window_creation(csv_file, gage = 5):
         width = int(float(find_min_max(x_max)[1])) + gage + 1 - x
         print(x, y, width, height)
         return x, y, width, height
-
-
-def crop_video(input_video_path, output_video_path, crop_region):
-    # Open the video file
-    cap = cv2.VideoCapture(input_video_path)
-
-    # Get the original frame width and height
-    frame_width = int(cap.get(3))
-    frame_height = int(cap.get(4))
-
-    # Define the coordinates of the crop region (x, y, width, height)
-    x, y, width, height = crop_region
-
-    # Initialize the video writer
-    fourcc = cv2.VideoWriter_fourcc(*'mp4v')  # Use appropriate codec
-    out = cv2.VideoWriter(output_video_path, fourcc, cap.get(cv2.CAP_PROP_FPS), (width, height))
-
-    while True:
-        # Read a frame from the video
-        ret, frame = cap.read()
-        if not ret:
-            break
-
-        # Crop the frame to the specified region
-        cropped_frame = frame[y:y+height, x:x+width]
-
-        # Write the cropped frame to the output video
-        out.write(cropped_frame)
-
-    # Release the video capture and writer objects
-    cap.release()
-    out.release()
 
 
 def crop_and_downsample_video(input_video_path, output_video_path, crop_region, skip_frames):
@@ -206,21 +172,19 @@ def crop_and_downsample_video(input_video_path, output_video_path, crop_region, 
     cap.release()
     out.release()
 
-# Call the function with appropriate arguments
-# crop_and_downsample_video('CVR_M32_13juin.mp4', 'output_video.mp4', (926, 419, 74, 84), skip_frames=10)
 
-
-def organize_video_files(folder_path, VideoType):
+def organize_video_files(folder_path):
     if not os.path.exists(folder_path):
         print(f"Folder path '{folder_path}' does not exist.")
         return
     
-    video_files = [file for file in os.listdir(folder_path) if file.endswith("."+VideoType)]
+    video_files = [file for file in os.listdir(folder_path) if any(file.lower().endswith(ext) for ext in ["mp4", "avi", "mov", "mkv"])]  # Add other video extensions as needed
     
     if not video_files:
         print("No video files found in the folder.")
         return
     
+    # creates folder for each video
     for video_file in video_files:
         file_name = os.path.splitext(video_file)[0]
         subfolder_path = os.path.join(folder_path, file_name)
@@ -236,7 +200,25 @@ def organize_video_files(folder_path, VideoType):
     print("Organizing completed successfully!")
 
 
-def analysis_of_folder(video_file_path, VideoType, numpy_array, frame_skip):
+def process_subfolders(main_folder, numpy_array, frame_skip):
+    if not os.path.exists(main_folder):
+        print(f"The folder '{main_folder}' does not exist.")
+        return
+
+    subfolders = [name for name in os.listdir(main_folder) if os.path.isdir(os.path.join(main_folder, name))]
+
+    # Process the analysis of each video folder
+    for subfolder_name in subfolders:
+        subfolder_path = os.path.join(main_folder, subfolder_name)
+        print(subfolder_path)
+        video_file = [file for file in os.listdir(subfolder_path)]
+        print(video_file)
+        video_file_path = os.path.join(subfolder_path, video_file[0])
+        print(video_file_path)
+        analysis_of_folder(video_file_path, numpy_array, frame_skip)
+
+
+def analysis_of_folder(video_file_path, numpy_array, frame_skip):
     # uptain subfolder path and video name
     folder_path = os.path.dirname(video_file_path)
     video_name = os.path.basename(folder_path)
@@ -252,12 +234,12 @@ def analysis_of_folder(video_file_path, VideoType, numpy_array, frame_skip):
     create_video_from_frames(folder_path, folder_path+'/20frames.mp4')
 
     # Video analysis of 20 frames
-    deeplabcut.analyze_videos(path_config_file, folder_path+'/20frames.mp4', videotype=VideoType, save_as_csv=True)
+    deeplabcut.analyze_videos(path_config_file, folder_path+'/20frames.mp4', save_as_csv=True)
 
-    # crop video
+    # crop and downsample video
     filter_aberrant_data(folder_path+'/20framesDLC_resnet50_11times60framesJul24shuffle1_180000.csv')
-    window = window_creation(folder_path+'/cleaned_20framesDLC_resnet50_11times60framesJul24shuffle1_180000.csv', gage=15)
-    crop_video_path = folder_path+'/'+video_name+'_analysed.'+VideoType
+    window = window_creation(folder_path+'/cleaned_20framesDLC_resnet50_11times60framesJul24shuffle1_180000.csv')
+    crop_video_path = folder_path+'/'+video_name+'_analysed.mp4'
     crop_and_downsample_video(video_file_path, crop_video_path, window, frame_skip)
 
     # removal of data from shorten video
@@ -268,54 +250,37 @@ def analysis_of_folder(video_file_path, VideoType, numpy_array, frame_skip):
     os.remove(folder_path+'/20framesDLC_resnet50_11times60framesJul24shuffle1_180000.h5')
 
     # Video analysis of full video
-    deeplabcut.analyze_videos(crop_path_config_file, crop_video_path, videotype=VideoType, save_as_csv=True)
+    deeplabcut.analyze_videos(crop_path_config_file, crop_video_path, save_as_csv=True)
 
     # numpy creation
     if numpy_array == True:
         csv_file = folder_path+'/'+video_name+'_analysedDLC_resnet50_11times60frames_cropedAug4shuffle1_800000.csv'
         # print(csv_file)
-        np_distance(csv_file, save=True)
+        np_distance(csv_file)
     
     # removal of croped video
     os.remove(crop_video_path)
     return f'Analysis complete of {video_name}'
 
 
-def process_subfolders(main_folder, VideoType, numpy_array, frame_skip):
-    if not os.path.exists(main_folder):
-        print(f"The folder '{main_folder}' does not exist.")
-        return
-
-    subfolders = [name for name in os.listdir(main_folder) if os.path.isdir(os.path.join(main_folder, name))]
-
-    for subfolder_name in subfolders:
-        subfolder_path = os.path.join(main_folder, subfolder_name)
-        video_file_name = subfolder_name + "." + VideoType
-        video_file_path = os.path.join(subfolder_path, video_file_name)
-
-        if not os.path.exists(video_file_path):
-            raise FileNotFoundError(f"No video file '{video_file_name}' found in subfolder '{subfolder_name}'.")
-
-        analysis_of_folder(video_file_path, VideoType, numpy_array, frame_skip)
-
-
-def analysis(video_folder, VideoType='mp4', numpy_array=True, frame_skip = 1):
+def analysis(video_folder, numpy_array=True, frame_skip = 1):
 
     # creates folders
-    organize_video_files(video_folder, VideoType)
+    organize_video_files(video_folder)
 
     # start analysis of each folder individually
-    process_subfolders(video_folder, VideoType, numpy_array, frame_skip)
+    process_subfolders(video_folder, numpy_array, frame_skip)
     return 'Analysis complete all videos'
 
 
-def dlc_plot(main_folder, VideoType='mp4'):
+def dlc_plot(main_folder):
     if not os.path.exists(main_folder):
         print(f"The folder '{main_folder}' does not exist.")
         return
 
     subfolders = [name for name in os.listdir(main_folder) if os.path.isdir(os.path.join(main_folder, name))]
 
+    # plots a graph for each video
     for subfolder_name in subfolders:
         x = None
         y = None
@@ -383,7 +348,3 @@ def filter_aberrant_data(csv_file_path):
     with open(cleaned_file_path, 'w', newline='') as cleaned_csv_file:
         writer = csv.writer(cleaned_csv_file)
         writer.writerows(cleaned_data)
-
-
-
-
